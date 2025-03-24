@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import LoaderSpinne from 'src/shared/components/LoaderSpinne.vue';
+import FilterSelector from 'src/issues/components/filter-selector/FilterSelector.vue';
+import IssueList from 'src/issues/components/issue-list/IssueList.vue';
 
 
 </script>
@@ -15,12 +17,14 @@ import LoaderSpinne from 'src/shared/components/LoaderSpinne.vue';
     <div class="col-xs-12 col-md-4">
       <!-- TODO: Filtros -->
        <!-- FilterSelector -->
+      <FilterSelector/>
     </div>
 
     <div class="col-xs-12 col-md-8">
       <!-- TODO: Loader -->
        <LoaderSpinne/>
       <!-- TODO: IssuList - Array de IsseCard -->
+       <IssueList/>
     </div>
   </div>
 </template>

@@ -6,12 +6,14 @@ interface Props {
   color?: string;
   size?: string;
   thickness?: number;
+  showLoaderMsg?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
   color: 'white',
   size: '3rem',
-  thickness: 5
+  thickness: 5,
+  showLoader: true
 })
 
 const loadingMsg = ref('Loading...')
@@ -21,7 +23,7 @@ const loadingMsg = ref('Loading...')
 <template>
   <div class="column items-center">
     <q-spinner :color :size :thickness/>
-    <span class="q-mt-sm">{{ loadingMsg }}</span>
+    <span v-if="showLoaderMsg" class="q-mt-sm">{{ loadingMsg }}</span>
   </div>
 </template>
 
