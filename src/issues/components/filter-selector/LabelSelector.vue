@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import LoaderSpinne from 'src/shared/components/LoaderSpinne.vue';
+import LoaderSpinner from 'src/shared/components/LoaderSpinner.vue';
 
 
 </script>
 
 <template>
-  <LoaderSpinne size="50px" :thickness="1" :show-loader-msg="false"/>
+  <LoaderSpinner size="50px" :thickness="1" :show-loader-msg="false"/>
   <q-chip v-for="label of 10" :key="label" color="primary" outline clickable>
     Algun nombre
   </q-chip>
