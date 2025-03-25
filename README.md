@@ -9,6 +9,10 @@ yarn
 npm install
 ```
 
+### create ENV file
+```copy env.template file and rename it as .env
+```
+
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 ```bash
 quasar dev
