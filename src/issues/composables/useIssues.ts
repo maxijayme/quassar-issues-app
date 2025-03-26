@@ -30,8 +30,7 @@ const useIssues = () => {
 
   const issuesQuery = useQuery({
     queryKey: ["issues", {state, labels}],
-    queryFn: () => getIssues(state.value, labels.value),
-    staleTime: 1000 * 60 * 5,
+    queryFn: () => getIssues(state.value, labels.value)
   })
 
 

@@ -3,8 +3,35 @@ import LoaderSpinner from 'src/shared/components/LoaderSpinner.vue';
 import FilterSelector from 'src/issues/components/filter-selector/FilterSelector.vue';
 import IssueList from 'src/issues/components/issue-list/IssueList.vue';
 import useIssues from '../composables/useIssues';
+import FloatingButtons from '../components/FloatingButtons.vue';
+import { ref } from 'vue';
+import NewIssueDialog from '../components/NewIssueDialog.vue';
+import { ButtonSize, type FloatingButtonsProps } from '../interfaces/buttons';
+import useLabels from '../composables/useLabels';
 
 const {issuesQuery} = useIssues()
+
+const { labels } = useLabels()
+
+const isOpen = ref<boolean>(false)
+
+const floatingButtons = ref<FloatingButtonsProps[]>([
+  {
+    icon: 'add',
+    color: 'primary',
+    size: ButtonSize.MEDIUM,
+    action: () => openDialog()
+  }
+])
+
+const openDialog = () =>{
+  isOpen.value = true
+}
+
+const closeDialog = () =>{
+  isOpen.value = false
+}
+
 </script>
 
 <template>
@@ -30,6 +57,11 @@ const {issuesQuery} = useIssues()
        </div>
     </div>
   </div>
+
+  <!-- FloatingButtons -->
+  <FloatingButtons :floatingButtons/>
+  <!-- IssuDialog -->
+  <NewIssueDialog :isOpen="isOpen" @onClose="closeDialog" :labels="labels || []"/>
 </template>
 <style lang="scss" scoped>
 
