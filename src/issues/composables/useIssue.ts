@@ -2,7 +2,6 @@ import githubApi from "src/api/githubApi";
 import type { Issue } from "../interfaces/issue";
 import { useQuery, useQueryClient } from "@tanstack/vue-query";
 import { computed } from "vue";
-import { preFetch } from "quasar/wrappers";
 
 const getIssue = async( issueNumber:number ):Promise<Issue> => {
   const {data} = await githubApi.get<Issue>(`/issues/${issueNumber}`)
@@ -42,6 +41,7 @@ const useIssue = ( issueNumber:number, options?:Options) => {
   })
   const issueComments= issueCommentsQuery.data
 
+  //Prefetch de la issue y sus comentarios
   const prefetchIssue = async( issueNumber:number ) => {
     await queryClient.prefetchQuery({
       queryKey: ["issue", issueNumber],
@@ -56,14 +56,23 @@ const useIssue = ( issueNumber:number, options?:Options) => {
     })
   }
 
-   return {
+  //Carga la cache con los datos de la issue sin volver a hacer la petición
+  const setIssueCacheData = (issue:Issue) => {
+    queryClient.setQueryData(
+      ["issue", issue.number],
+       issue
+    )
+  }
+
+  return {
     issue,
     issueComments,
     isLoadingComments: issueCommentsQuery.isLoading,
     isLoading: issueQuery.isLoading,
     //Methods
-    prefetchIssue
-   }
+    prefetchIssue,
+    setIssueCacheData
+  }
 }
 
 export default useIssue;
