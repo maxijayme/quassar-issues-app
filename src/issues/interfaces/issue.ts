@@ -17,7 +17,7 @@ export interface Issue {
   state:                    State;
   locked:                   boolean;
   assignee:                 null;
-  assignees:                any[];
+  assignees:                User[];
   milestone:                null;
   comments:                 number;
   created_at:               string;

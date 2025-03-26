@@ -2,8 +2,7 @@
 import { State, type Issue } from 'src/issues/interfaces/issue';
 import { timeSince } from 'src/shared/helpers/time-since';
 import { toRef } from 'vue';
-import VueMarkdown from 'vue-markdown-render';
-import VueMarkDown from 'vue-markdown-render';
+import VueMarkdown from 'vue-markdown-render'
 
 interface Props {
   issue: Issue;
@@ -26,10 +25,10 @@ const issue = toRef(props, 'issue');
 
       <q-item-section>
         <q-item-label>
-          <router-link :to="`/issue/${ issue.id }`">{{ issue.title }}</router-link>
+          <router-link :to="`/issue/${ issue.number }`">{{ issue.title }}</router-link>
         </q-item-label>
         <q-item-label caption>
-          Created {{timeSince(issue.created_at)}} ago
+          Published {{timeSince(issue.created_at)}} ago
         </q-item-label>
       </q-item-section>
 
@@ -49,7 +48,7 @@ const issue = toRef(props, 'issue');
     <q-separator />
 
     <q-item-section class="q-pa-md">
-        <VueMarkdowngit :source="issue.body || ''" />
+        <VueMarkdown :source="issue.body || ''" />
     </q-item-section>
 
     <q-separator />
