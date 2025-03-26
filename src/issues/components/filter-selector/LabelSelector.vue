@@ -13,9 +13,9 @@ const { labels, isLoading, toggleLabel, selectedLabes } = useLabels();
         v-for="label of labels"
         :key="label.node_id"
         :style="{color: `#${label.color}`}"
-        :outline="!selectedLabes.includes(label.node_id)"
+        :outline="!selectedLabes.includes(label.name)"
         clickable
-        @click="toggleLabel(label.node_id)">
+        @click="toggleLabel(label.name)">
         {{ label.name }}
       </q-chip>
     </div>
