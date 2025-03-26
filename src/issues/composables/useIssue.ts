@@ -1,7 +1,8 @@
 import githubApi from "src/api/githubApi";
 import type { Issue } from "../interfaces/issue";
-import { useQuery } from "@tanstack/vue-query";
+import { useQuery, useQueryClient } from "@tanstack/vue-query";
 import { computed } from "vue";
+import { preFetch } from "quasar/wrappers";
 
 const getIssue = async( issueNumber:number ):Promise<Issue> => {
   const {data} = await githubApi.get<Issue>(`/issues/${issueNumber}`)
@@ -13,11 +14,21 @@ const getIssueComments = async( issueNumber:number ):Promise<Issue[]> => {
   return data
 }
 
-const useIssue = ( issueNumber:number) => {
+interface Options{
+  //Autocargar la petición de issues y comments
+  autoload?: boolean
+}
+const useIssue = ( issueNumber:number, options?:Options) => {
+
+  //acceso global a la instancia de queryClient
+  const queryClient = useQueryClient();
+
+  const {autoload = true} = options || {}
 
   const issueQuery = useQuery({
     queryKey: ["issue", issueNumber],
     queryFn: () => getIssue(issueNumber),
+    enabled: autoload,
     staleTime: 1000 * 60 // 1 minutes
   })
   const issue= issueQuery.data
@@ -26,16 +37,32 @@ const useIssue = ( issueNumber:number) => {
     queryKey: ["issue", issueNumber, 'comments'],
     queryFn: () => getIssueComments(issue.value?.number || 0),
     // queryFn: () => getIssueComments(issueNumber),
-    enabled: computed(() => !!issue.value), // sólo dispara la petición si issue.value es true
+    enabled: computed(() => !!issue.value && autoload), // sólo dispara la petición si issue.value es true
     staleTime: 1000 * 60 // 1 minutes
   })
   const issueComments= issueCommentsQuery.data
+
+  const prefetchIssue = async( issueNumber:number ) => {
+    await queryClient.prefetchQuery({
+      queryKey: ["issue", issueNumber],
+      queryFn: () => getIssue(issueNumber),
+      staleTime: 1000 * 60
+    })
+
+    await queryClient.prefetchQuery({
+      queryKey: ["issue", issueNumber, 'comments'],
+      queryFn: () => getIssueComments(issueNumber),
+      staleTime: 1000 * 60 // 1 minutes
+    })
+  }
 
    return {
     issue,
     issueComments,
     isLoadingComments: issueCommentsQuery.isLoading,
     isLoading: issueQuery.isLoading,
+    //Methods
+    prefetchIssue
    }
 }
 
