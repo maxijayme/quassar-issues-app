@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue';
 import { MdEditor } from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import type Label from '../interfaces/label';
+import useIssueMutation from '../composables/useIssueMutation';
 
 interface Props{
   isOpen: boolean,
@@ -13,6 +14,8 @@ interface Emits{
   (e: 'onClose'): void
 }
 
+const { issueMutation } = useIssueMutation();
+
 const props = defineProps<Props>()
 const emits = defineEmits<Emits>()
 
@@ -22,11 +25,23 @@ const body = ref<string>('')
 const dialogLabels = ref<string[]>([])
 
 const labelsOptions = computed(() => {
-  return props.labels.map(label => ({label: label.name, value: label.name}))
+  return props.labels.map(label => (label.name))
 })
 
 watch(props, () => {
   isDialogOpen.value = props.isOpen
+})
+
+watch( issueMutation.isSuccess, (isSuccess) => {
+  if(isSuccess){
+
+    title.value = ''
+    body.value = ''
+    dialogLabels.value = []
+
+    issueMutation.reset()
+    emits('onClose')
+  }
 })
 
 </script>
@@ -35,7 +50,7 @@ watch(props, () => {
   <div class="q-pa-md q-gutter-sm">
     <q-dialog v-model="isDialogOpen" position="bottom" persistent>
       <q-card style="width: 500px">
-        <q-form>
+        <q-form @submit="issueMutation.mutate({ title, body, labels: dialogLabels })">
 
           <q-linear-progress :value="1" color="primary" />
 
@@ -47,7 +62,7 @@ watch(props, () => {
 
             <q-space />
             <div>
-              <q-input dense v-model="title" label="Title" aria-placeholder="Title" class="q-mb-sm"/>
+              <q-input dense v-model="title" label="Title" aria-placeholder="Title" class="q-mb-sm" :rules="[ val => !!val || 'Field is required']"/>
 
               <q-select
                 dense
@@ -67,13 +82,14 @@ watch(props, () => {
 
           <q-card-actions class="row wrap justify-end">
             <q-btn
-            type="submit"
-            flat
-            label="Add Issue"
-            color="dark"
-            v-close-popup
+              :disable="issueMutation.isPending.value"
+              type="submit"
+              flat
+              label="Add Issue"
+              color="dark"
             />
             <q-btn
+              :disable="issueMutation.isPending.value"
               flat
               label="Cancel"
               color="primary"
